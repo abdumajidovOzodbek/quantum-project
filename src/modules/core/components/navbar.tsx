@@ -8,23 +8,23 @@ const Navbar: React.FC = () => {
         isActive ? "text-white flex flex-col items-center text-blue-400" : "text-white flex flex-col items-center";
 
     return (
-        <header className="bg-blue-600 p-4 shadow-md">
+        <header className="bg-blue-600 p-2 shadow-md fixed top-0 w-full z-10">
             <nav className="container mx-auto flex justify-around items-center">
                 <NavLink to="/news" className={navLinkClass}>
-                    <FontAwesomeIcon icon={faNewspaper} size="2x" />
-                    <span className="mt-2">News</span>
+                    <FontAwesomeIcon icon={faNewspaper} size="lg" />
+                    <span className="mt-1 text-xs">News</span>
                 </NavLink>
                 <NavLink to="/videos" className={navLinkClass}>
-                    <FontAwesomeIcon icon={faVideo} size="2x" />
-                    <span className="mt-2">Videos</span>
+                    <FontAwesomeIcon icon={faVideo} size="lg" />
+                    <span className="mt-1 text-xs">Videos</span>
                 </NavLink>
-                <NavLink to="/profiles" className={navLinkClass}>
-                    <FontAwesomeIcon icon={faUser} size="2x" />
-                    <span className="mt-2">Profiles</span>
+                <NavLink to="/users" className={navLinkClass}>
+                    <FontAwesomeIcon icon={faUser} size="lg" />
+                    <span className="mt-1 text-xs">Users</span>
                 </NavLink>
                 <NavLink to="/chat" className={navLinkClass}>
-                    <FontAwesomeIcon icon={faComments} size="2x" />
-                    <span className="mt-2">Chat</span>
+                    <FontAwesomeIcon icon={faComments} size="lg" />
+                    <span className="mt-1 text-xs">Chat</span>
                 </NavLink>
             </nav>
         </header>

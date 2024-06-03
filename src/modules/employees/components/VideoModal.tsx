@@ -1,30 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faThumbsUp, faEye } from '@fortawesome/free-solid-svg-icons'; // Import the faEye icon
 import { VideoModalProps } from '../interfaces/interface';
-import { addComment } from '../services/postApi';
+import { addComment, checkLiked, viewPost } from '../services/postApi'; // Import the getViewCount function
 import { useCommentsById } from '../hooks/usePosts';
 import { senderId } from '../../auth/states/useAuthStore';
 import { useUserById } from '../../profiles/hooks/useProfile';
+import { likePost } from '../services/postApi';
 
 const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, videoRef }) => {
   const [comment, setComment] = useState('');
+  const [liked, setLiked] = useState(false);
+  const [viewCount, setViewCount] = useState(0); // State to hold the view count
   const id = post?._id;
   const { data } = useCommentsById(id);
   const user: any = useUserById(senderId);
-
-  const [comments, setComments]: any = useState([]);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     if (data) {
       setComments(data.comments);
     }
-  }, [data]);
+    (async () => {
+      try {
+        const like = await checkLiked(post._id);
+        
+        if (like === 'liked') {
+          setLiked(true);
+      
+        }
+      } catch (error) {
+        console.error('Error liking the post', error);
+      }
+    })()
+    if (isOpen && post?._id) {
+      (async () => {
+        try {
+          await viewPost(post._id);
+          if (post.viewsCount == 0) {
+            setViewCount(1);
+          } {
+            setViewCount(post.viewsCount); // Set the view count in the state
+          }
+        } catch (error) {
+          console.error('Error handling view count', error);
+        }
+      })();
+    }
+  }, [data, isOpen]);
 
   if (!post) return null;
 
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setComment(e.target.value);
   };
@@ -43,7 +71,15 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
       setComments([...comments, newComment]);
       setComment('');
       addComment({ content: newComment.content, postId: newComment.postId });
-      // Here, you can also send the new comment to your backend service
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      await likePost(post._id);
+      setLiked(!liked);
+    } catch (error) {
+      console.error('Error liking the post', error);
     }
   };
 
@@ -95,6 +131,16 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
                 <p className="text-lg font-bold text-gray-900 truncate">{post.author.username}</p>
                 <p className="text-sm text-gray-600">{post.title}</p>
               </div>
+              <div className="flex items-center ml-4 space-x-2">
+                <button onClick={handleLike} className="text-gray-600 hover:text-gray-800">
+                  <FontAwesomeIcon icon={faThumbsUp} size="lg" className={liked ? 'text-blue-500' : ''} />
+                  <span>{post.likesCount}</span>
+                </button>
+                <div className="text-gray-600 flex items-center space-x-1">
+                  <FontAwesomeIcon icon={faEye} size="lg" />
+                  <span>{viewCount}</span>
+                </div>
+              </div>
             </div>
             <h3 className="text-lg font-semibold mt-4">Comments</h3>
             <div className="space-y-2">
@@ -104,7 +150,6 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
           <form onSubmit={handleCommentSubmit} className="p-4 bg-white border-t border-gray-300">
             <input
               className="w-full p-2 border border-gray-300 rounded-lg"
-              rows={3}
               value={comment}
               onChange={handleCommentChange}
               placeholder="Add a comment..."

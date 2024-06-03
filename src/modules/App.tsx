@@ -13,6 +13,7 @@ import Profiles from './profiles/components/Profile';
 import UserProfile from './profiles/components/UserProfile';
 import ChatWithUser from './chat/components/chatWithUserComp';
 import Chat from './chat/components/chat';
+import MyProfile from './myProfile/components/myProfile';
 
 const queryClient = new QueryClient();
 
@@ -25,8 +26,9 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={< Layout />}>
             <Route path='news' element={<NewsList />} />
+            <Route path='profile' element={<MyProfile />} />
             <Route path='videos' element={<VideoList />} />
-            <Route path='profiles' element={<Profiles />} />
+            <Route path='users' element={<Profiles />} />
             <Route path="/user/:userId" element={<UserProfile />} />
             <Route path="/news/:postId" element={<SinglePost />} />
             <Route path="/chat" element={<Chat />} >

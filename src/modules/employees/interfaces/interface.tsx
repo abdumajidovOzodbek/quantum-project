@@ -8,6 +8,7 @@ export interface Post {
     title: string;
     mediaUrl: string;
     likesCount: number;
+    viewsCount:number;
     comments: Array<any>;
     type: string;
   }
