@@ -1,71 +1,138 @@
 import React, { useState } from 'react';
+import { useToGetprofile } from '../../profiles/hooks/useProfile';
+import { senderId } from '../../auth/states/useAuthStore';
+import { deleteAccount, deleteProfilePicture, updateProfile, uploadPicture } from '../services/useMyprofileService';
+import ErrorModal from '../../Errors/error';
+; // Adjust the path if necessary
 
 const MyProfile = () => {
-    // Sample profile data
-    const [profile, setProfile] = useState({
-        username: "john_doe",
-        fullName: "John Doe",
-        email: "john@example.com",
-        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        profilePicture: "https://via.placeholder.com/150",
-    });
+    const { data, error, isLoading } = useToGetprofile(senderId);
+    const [selectedPicture, setSelectedPicture] = useState(null);
+    const [username, setUsername] = useState("");
+    const [errorMessage, setErrorMessage] = useState(null);
 
-
-    const handleUploadPicture = () => {
-        // Logic to handle picture upload
-        console.log("Upload picture clicked");
+    const handlePictureChange = (e) => {
+        setSelectedPicture(e.target.files[0]);
     };
 
-    const handleDeletePicture = () => {
-        // Logic to delete profile picture
-        console.log("Delete picture clicked");
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <ErrorModal message={error.message} onClose={() => setErrorMessage(null)} />
+        );
+    }
+
+    const profile = data.user;
+
+    const handleUploadPicture = async () => {
+        if (!selectedPicture) {
+            console.log("No picture selected");
+            return;
+        }
+        try {
+            const uploaded = await uploadPicture(selectedPicture);
+            if (uploaded.user) {
+                location.reload();
+            }
+        } catch (err) {
+            setErrorMessage(err.response.data.message);
+        }
     };
 
-    const handleDeleteAccount = () => {
-        // Logic to delete user account
-        console.log("Delete account clicked");
+    const handleDeletePicture = async () => {
+        try {
+            await deleteProfilePicture();
+            location.reload();
+        } catch (err) {
+            setErrorMessage(err.response.data.message);
+        }
     };
 
-    const handleLogout = () => {
+    const handleDeleteAccount = async () => {
+        try {
+            await deleteAccount();
+            localStorage.clear();
+            location.reload();
+        } catch (err) {
+            setErrorMessage(err.response.data.message);
+        }
+    };
+
+    const handleLogout = async () => {
         // Logic to logout user
         console.log("Logout clicked");
     };
 
-    const handleUsernameUpdate = () => {
+    const handleUsernameUpdate = async () => {
         // Logic to update username
-        console.log("Update username clicked");
+        try {
+            await updateProfile(username)
+            location.reload()
+        } catch (error) {
+            console.log(error);
+            
+            setErrorMessage(error.response.data.message)
+        }
     };
 
     return (
         <div className="container mx-auto py-8">
+            {errorMessage && (
+                <ErrorModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+            )}
             <div className="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
                 <div className="p-4">
                     <div className="flex items-center justify-center">
-                        <img src={profile.profilePicture} alt="Profile" className="w-32 h-32 rounded-full" />
+                        <img src={'http://localhost:3000/' + profile.profilePicture} alt="Profile" className="w-32 h-32 rounded-full" />
                     </div>
                     <div className="text-center mt-4">
-                        <h2 className="text-xl font-semibold">{profile.fullName}</h2>
-                        <p className="text-gray-600">@{profile.username}</p>
+                        <h2 className="text-gray-600">@{profile.username}</h2>
                     </div>
                     <div className="mt-4">
                         <h3 className="text-lg font-semibold">About Me</h3>
                         <p className="text-gray-600">{profile.bio}</p>
                     </div>
-                    <div className="mt-4">
-                        <h3 className="text-lg font-semibold">Contact Information</h3>
-                        <p className="text-gray-600">Email: {profile.email}</p>
+                    <div className="flex justify-center mt-6 space-x-4">
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/jpg,image/png,image/gif,image/bmp,image/tiff,image/webp,image/svg+xml,image/vnd.adobe.photoshop,image/x-icon,application/pdf,application/postscript,image/dng,image/x-targa,image/x-dds,image/aces,image/jfif"
+                            onChange={handlePictureChange}
+                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                            required
+                        />
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleUploadPicture}>
+                            Upload Picture
+                        </button>
+                        {profile.profilePicture !== 'uploads/default-avatar.png' && (
+                            <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg" onClick={handleDeletePicture}>
+                                Delete Picture
+                            </button>
+                        )}
                     </div>
                     <div className="flex justify-center mt-6 space-x-4">
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleUploadPicture}>Upload Picture</button>
-                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg" onClick={handleDeletePicture}>Delete Picture</button>
-                    </div>
-                    <div className="flex justify-center mt-6 space-x-4">
-                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg" onClick={handleDeleteAccount}>Delete Account</button>
-                        <button className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg" onClick={handleLogout}>Logout</button>
+                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg" onClick={handleDeleteAccount}>
+                            Delete Account
+                        </button>
+                        <button className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg" onClick={handleLogout}>
+                            Logout
+                        </button>
                     </div>
                     <div className="flex justify-center mt-6">
-                        <input type="text" className="border border-gray-300 rounded-lg p-2 mr-2" value={profile.username} onChange={(e) => setProfile({ ...profile, username: e.target.value })} />
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleUsernameUpdate}>Update Username</button>
+                        <input
+                            type="text"
+                            className="border border-gray-300 rounded-lg p-2 mr-2"
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleUsernameUpdate}>
+                            Update Username
+                        </button>
                     </div>
                 </div>
             </div>
