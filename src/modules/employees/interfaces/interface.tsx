@@ -2,6 +2,7 @@ export interface Post {
     _id: string;
     content: string;
     author: {
+      _id: ReactNode;
       username: string;
       profilePicture: string;
     };

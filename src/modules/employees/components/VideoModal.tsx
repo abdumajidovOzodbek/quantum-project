@@ -64,6 +64,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
         content: comment,
         postId: post._id,
         author: {
+          _id:senderId,
           profilePicture: user.data.user.profilePicture,
           username: user.data.user.username,
         },
@@ -92,7 +93,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
           className="h-8 w-8 rounded-full mr-2 object-cover"
         />
         <div>
-          <p className="text-sm font-semibold text-gray-900">{comment.author.username}</p>
+          {post.author._id===comment.author._id? <p className="rounded-md text-sm font-semibold text-gray-900 bg-black text-white">{comment.author.username}</p>:<p className="text-sm font-semibold text-gray-900">{comment.author.username}</p>}
           <p className="text-sm text-gray-800">{comment.content}</p>
         </div>
       </div>

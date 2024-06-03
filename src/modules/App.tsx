@@ -14,6 +14,9 @@ import UserProfile from './profiles/components/UserProfile';
 import ChatWithUser from './chat/components/chatWithUserComp';
 import Chat from './chat/components/chat';
 import MyProfile from './myProfile/components/myProfile';
+import Upload from './upload/components/upload';
+import NewPost from './upload/components/uploadnewPost';
+import NewVideo from './upload/components/uploadVideo';
 
 const queryClient = new QueryClient();
 
@@ -27,7 +30,12 @@ const App: React.FC = () => {
           <Route path="/" element={< Layout />}>
             <Route path='news' element={<NewsList />} />
             <Route path='profile' element={<MyProfile />} />
-            <Route path='videos' element={<VideoList />} />
+            <Route path='upload' element={<Upload />} />
+            <Route path='upload-news' element={<NewPost />} />
+            <Route path='upload-video' element={<NewVideo />} />
+            <Route path='videos' element={<VideoList />} >
+            <Route path='users' element={<Profiles />} />
+            </Route>
             <Route path='users' element={<Profiles />} />
             <Route path="/user/:userId" element={<UserProfile />} />
             <Route path="/news/:postId" element={<SinglePost />} />
