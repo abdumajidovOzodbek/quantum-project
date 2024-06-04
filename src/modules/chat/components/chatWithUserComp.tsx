@@ -21,7 +21,7 @@ const ChatWithUser: React.FC = () => {
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const response = await axios.get<Message[]>(`${host}/messages/${senderId}/${userId}`);
+                const response = await axios.get<Message[]>(`${host}messages/${senderId}/${userId}`);
                 setMessages(response.data);
             } catch (err) {
                 console.error('Error fetching messages:', err);

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../core/lib/apiClient";
 export const token = localStorage.getItem('token')
-export const host = 'http://localhost:3000/'
+export const host = 'https://quantum-project-a6c6366fa11f.herokuapp.com/'
 
 const fetchUserById = async (id: number) => {
     try {

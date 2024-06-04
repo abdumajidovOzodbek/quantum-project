@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://quantum-project-a6c6366fa11f.herokuapp.com/',
   headers: {
     'Content-Type': 'application/json',
   },
