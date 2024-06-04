@@ -42,7 +42,7 @@ const NewVideo: React.FC = () => {
         try {
             await uploadVideo(postData)
         } catch (error) {
-            setErrorMessage('Please fill all places')
+            setErrorMessage(error.response.data.message)
         }
 
 

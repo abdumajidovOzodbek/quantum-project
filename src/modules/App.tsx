@@ -34,13 +34,13 @@ const App: React.FC = () => {
             <Route path='upload-news' element={<NewPost />} />
             <Route path='upload-video' element={<NewVideo />} />
             <Route path='videos' element={<VideoList />} >
-            <Route path='users' element={<Profiles />} />
+              <Route path='users' element={<Profiles />} />
             </Route>
             <Route path='users' element={<Profiles />} />
             <Route path="/user/:userId" element={<UserProfile />} />
             <Route path="/news/:postId" element={<SinglePost />} />
             <Route path="/chat" element={<Chat />} >
-            <Route path="/chat/:userId" element={<ChatWithUser />} />
+              <Route path="/chat/:userId" element={<ChatWithUser />} />
             </Route>
           </Route>
           <Route path="login" element={<Login />} />

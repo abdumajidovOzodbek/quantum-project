@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVideo, faNewspaper, faPen, faFilm } from '@fortawesome/free-solid-svg-icons';
 import { useToGetprofile } from '../../profiles/hooks/useProfile';
 import { senderId } from '../../auth/states/useAuthStore';
 import { deleteAccount, deleteProfilePicture, updateProfile, uploadPicture } from '../services/useMyprofileService';
-import ErrorModal from '../../Errors/error';
-; // Adjust the path if necessary
+import ErrorModal from '../../Errors/error'; // Adjust the path if necessary
 
 const MyProfile = () => {
     const { data, error, isLoading } = useToGetprofile(senderId);
@@ -102,10 +104,9 @@ const MyProfile = () => {
                     <div className="flex justify-center mt-6 space-x-4">
                         <input
                             type="file"
-                            accept="image/jpeg,image/jpg,image/png,image/gif,image/bmp,image/tiff,image/webp,image/svg+xml,image/vnd.adobe.photoshop,image/x-icon,application/pdf,application/postscript,image/dng,image/x-targa,image/x-dds,image/aces,image/jfif"
+                            accept="image/*"
                             onChange={handlePictureChange}
                             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-                            required
                         />
                         <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleUploadPicture}>
                             Upload Picture
@@ -136,6 +137,22 @@ const MyProfile = () => {
                     </div>
                 </div>
             </div>
+            <nav className="mt-8">
+                <ul className="flex flex-col space-y-2">
+                    <li>
+                        <NavLink to="/my-new-posts" className="flex items-center space-x-2 bg-purple-500 text-white px-4 py-2 rounded-lg">
+                            <FontAwesomeIcon icon={faPen} className="w-6 h-6" />
+                            <span>My New Posts</span>
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/my-videos" className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg">
+                            <FontAwesomeIcon icon={faFilm} className="w-6 h-6" />
+                            <span>My Videos</span>
+                        </NavLink>
+                    </li>
+                </ul>
+            </nav>
         </div>
     );
 };
