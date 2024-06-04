@@ -1,8 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { senderId } from '../../auth/states/useAuthStore';
 import { uploadVideo } from '../services/useUpload';
 import ErrorModal from '../../Errors/error';
 import { useNavigate } from 'react-router-dom';
+import { senderId } from '../../profiles/hooks/useProfile';
 
 interface ImageData {
     url: string;

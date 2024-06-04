@@ -1,6 +1,5 @@
-import create from 'zustand';
+import {create} from 'zustand';
 import { login, register } from '../services/authApi';
-export const senderId: any = localStorage.getItem('userId');
 
 interface AuthState {
   user: { _id: number; username: string } | null;

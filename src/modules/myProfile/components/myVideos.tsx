@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useUserPostsById } from "../hooks/useMyProfile";
-import { senderId } from "../../auth/states/useAuthStore";
 import ErrorModal from "../../Errors/error";
 import { deletePostByid, UpdateByPostId } from "../services/useMyprofileService";
 import { useNavigate } from "react-router-dom";
-import { host } from "../../profiles/hooks/useProfile";
+import { host, senderId } from "../../profiles/hooks/useProfile";
 
 const MyVideos = () => {
     const { data, isLoading, error } = useUserPostsById(senderId);

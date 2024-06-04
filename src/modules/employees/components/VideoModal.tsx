@@ -5,8 +5,7 @@ import { faTimes, faThumbsUp, faEye } from '@fortawesome/free-solid-svg-icons'; 
 import { VideoModalProps } from '../interfaces/interface';
 import { addComment, checkLiked, deleteComment, viewPost } from '../services/postApi'; // Import the getViewCount function
 import { useCommentsById } from '../hooks/usePosts';
-import { senderId } from '../../auth/states/useAuthStore';
-import { host, useUserById } from '../../profiles/hooks/useProfile';
+import { host, senderId, useUserById } from '../../profiles/hooks/useProfile';
 import { likePost } from '../services/postApi';
 
 const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, videoRef }) => {
@@ -154,15 +153,15 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
                 <p className="text-sm text-gray-600">{post.title}</p>
               </div>
               <div className="flex items-center ml-4 space-x-2">
-              <button
-     onClick={handleLike}
-     className={`text-gray-600 hover:text-gray-800 ${liked && 'opacity-90 cursor-not-allowed'}`}
-     disabled={liked}
-   >
-     <FontAwesomeIcon icon={faThumbsUp} size="lg" className={liked ? 'text-blue-500' : ''} />
-     <span>{likeCount}</span>
-   </button>
-   
+                <button
+                  onClick={handleLike}
+                  className={`text-gray-600 hover:text-gray-800 ${liked && 'opacity-90 cursor-not-allowed'}`}
+                  disabled={liked}
+                >
+                  <FontAwesomeIcon icon={faThumbsUp} size="lg" className={liked ? 'text-blue-500' : ''} />
+                  <span>{likeCount}</span>
+                </button>
+
 
                 <div className="text-gray-600 flex items-center space-x-1">
                   <FontAwesomeIcon icon={faEye} size="lg" />

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { host, useToGetprofile, useUserById } from '../../profiles/hooks/useProfile';
+import { host, senderId, useToGetprofile, useUserById } from '../../profiles/hooks/useProfile';
 import io, { Socket } from 'socket.io-client';
 import axios from 'axios';
-import { senderId } from '../../auth/states/useAuthStore';
 import {Message} from '../interfaces/interface'
 
 

@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
-import { senderId } from '../../auth/states/useAuthStore';
 import { uploadNews } from '../services/useUpload';
+import { senderId } from '../../profiles/hooks/useProfile';
 
 interface ImageData {
     url: string;

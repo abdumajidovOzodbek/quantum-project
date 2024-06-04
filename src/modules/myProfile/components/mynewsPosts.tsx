@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useUserPostsById } from "../hooks/useMyProfile";
-import { senderId } from "../../auth/states/useAuthStore";
 import ErrorModal from "../../Errors/error";
 import { deletePostByid, UpdateByPostId } from "../services/useMyprofileService";
-import { host } from "../../profiles/hooks/useProfile";
+import { host, senderId } from "../../profiles/hooks/useProfile";
 
 const MyNews = () => {
     const { data, isLoading, error } = useUserPostsById(senderId);
