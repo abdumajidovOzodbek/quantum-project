@@ -1,18 +1,31 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../states/useAuthStore';
+import { NavLink, useNavigate } from 'react-router-dom';
+import ErrorModal from '../../Errors/error';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuthStore();
-
+  const navigate = useNavigate()
+  const [errorMessage, setErrorMessage]:any = useState(null)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(username, password);
+    try {
+      const data:any = await login(username, password);
+      if (data.token) {
+        navigate('/videos')
+      }
+    } catch (error) {
+      setErrorMessage('Username or password incorrect please check or sign up')
+
+    }
+
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {errorMessage && <ErrorModal message={errorMessage} onClose={() => setErrorMessage(null)} />}
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Log in to your account</h2>
@@ -20,7 +33,7 @@ const Login: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="text" className="block text-sm font-medium text-gray-700">
-             Username
+              Username
             </label>
             <input
               id="text"
@@ -53,6 +66,10 @@ const Login: React.FC = () => {
             >
               Log in
             </button>
+            <NavLink className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-300 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              to={'/register'}>
+or sign up
+            </NavLink>
           </div>
         </form>
       </div>

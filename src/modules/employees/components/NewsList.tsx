@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import { usePosts } from '../hooks/usePosts';
-
+import { host } from '../../profiles/hooks/useProfile';
 const NewsList: React.FC = () => {
     const { data, error, isLoading }: any = usePosts();
 
@@ -26,7 +26,7 @@ const NewsList: React.FC = () => {
                     <li key={post._id} className="py-4">
                         <Link to={`/news/${post._id}`} className="flex items-center"> {/* Use Link to navigate to single post page */}
                             <div className="flex-shrink-0">
-                                <img className="h-10 w-10 rounded-full" src={'http://localhost:3000/' + post.author.profilePicture} alt="Author Avatar" />
+                                <img className="h-10 w-10 rounded-full" src={host + post.author.profilePicture} alt="Author Avatar" />
                             </div>
                             <div className="ml-3">
                                 <p className="text-sm font-medium text-gray-900">{post.author.username}</p>

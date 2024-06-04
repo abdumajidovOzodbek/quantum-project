@@ -1,7 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { senderId } from '../../auth/states/useAuthStore';
-import { uploadNews, uploadVideo } from '../services/useUpload';
+import { uploadVideo } from '../services/useUpload';
 import ErrorModal from '../../Errors/error';
+import { useNavigate } from 'react-router-dom';
 
 interface ImageData {
     url: string;
@@ -15,6 +16,7 @@ const NewVideo: React.FC = () => {
     const [title, setTitle] = useState('');
     const [selectedPicture, setSelectedMedia] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
+    const navigate= useNavigate()
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedMedia(event.target.files[0])
@@ -41,7 +43,8 @@ const NewVideo: React.FC = () => {
 
         try {
             await uploadVideo(postData)
-        } catch (error) {
+            await navigate('/my-videos')
+        } catch (error:any) {
             setErrorMessage(error.response.data.message)
         }
 

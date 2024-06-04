@@ -3,16 +3,17 @@ import Modal from 'react-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faThumbsUp, faEye } from '@fortawesome/free-solid-svg-icons'; // Import the faEye icon
 import { VideoModalProps } from '../interfaces/interface';
-import { addComment, checkLiked, viewPost } from '../services/postApi'; // Import the getViewCount function
+import { addComment, checkLiked, deleteComment, viewPost } from '../services/postApi'; // Import the getViewCount function
 import { useCommentsById } from '../hooks/usePosts';
 import { senderId } from '../../auth/states/useAuthStore';
-import { useUserById } from '../../profiles/hooks/useProfile';
+import { host, useUserById } from '../../profiles/hooks/useProfile';
 import { likePost } from '../services/postApi';
 
 const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, videoRef }) => {
   const [comment, setComment] = useState('');
   const [liked, setLiked] = useState(false);
-  const [viewCount, setViewCount] = useState(0); // State to hold the view count
+  const [viewCount, setViewCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
   const id = post?._id;
   const { data } = useCommentsById(id);
   const user: any = useUserById(senderId);
@@ -21,14 +22,15 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
   useEffect(() => {
     if (data) {
       setComments(data.comments);
+      setLikeCount(post?.likesCount)
     }
     (async () => {
       try {
         const like = await checkLiked(post._id);
-        
+
         if (like === 'liked') {
           setLiked(true);
-      
+
         }
       } catch (error) {
         console.error('Error liking the post', error);
@@ -64,7 +66,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
         content: comment,
         postId: post._id,
         author: {
-          _id:senderId,
+          _id: senderId,
           profilePicture: user.data.user.profilePicture,
           username: user.data.user.username,
         },
@@ -78,27 +80,46 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
   const handleLike = async () => {
     try {
       await likePost(post._id);
+      setLikeCount(post.likesCount + 1)
       setLiked(!liked);
     } catch (error) {
       console.error('Error liking the post', error);
     }
   };
 
+  const deleteCommentById = async ({ commentId, postId }) => {
+    await deleteComment({ commentId, postId })
+    await setComments(comments.filter((comment) => comment._id !== commentId))
+  }
   const renderComments = () => {
     return comments.map((comment, index) => (
-      <div key={index} className="p-2 border-b border-gray-300 flex items-start">
+
+      <div key={index} className="p-2 border-b border-gray-300 flex items-start relative">
         <img
-          src={`http://localhost:3000/${comment?.author.profilePicture}`}
+          src={`${host}${comment?.author.profilePicture}`}
           alt="Author Avatar"
           className="h-8 w-8 rounded-full mr-2 object-cover"
         />
         <div>
-          {post.author._id===comment.author._id? <p className="rounded-md text-sm font-semibold text-gray-900 bg-black text-white">{comment.author.username}</p>:<p className="text-sm font-semibold text-gray-900">{comment.author.username}</p>}
+          {post.author._id === comment.author._id ? (
+            <p className="rounded-md text-sm font-semibold text-gray-900 bg-black text-white">{comment.author.username}</p>
+          ) : (
+            <p className="text-sm font-semibold text-gray-900">{comment.author.username}</p>
+          )}
           <p className="text-sm text-gray-800">{comment.content}</p>
+          {post.author._id === senderId && (
+            <button
+              onClick={() => deleteCommentById({ commentId: comment._id, postId: post._id })}
+              className="absolute top-0 right-0 px-2 py-1 text-xs text-white bg-red-500 rounded-md hover:bg-red-600"
+            >
+              Delete
+            </button>
+          )}
         </div>
       </div>
     ));
   };
+
 
   return (
     <Modal
@@ -119,7 +140,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
           <video
             ref={videoRef}
             className="h-full w-full"
-            src={'http://localhost:3000/' + post.mediaUrl}
+            src={host + post.mediaUrl}
             controls
             autoPlay
           ></video>
@@ -127,16 +148,22 @@ const VideoModal: React.FC<VideoModalProps> = ({ post, isOpen, onRequestClose, v
         <div className="w-full md:w-[62%] border-t md:border-t-0 md:border-l border-gray-300 flex flex-col h-1/2 md:h-full">
           <div className="p-4 text-gray-900 flex-grow overflow-y-auto">
             <div className="flex items-center mb-4 p-4 text-gray-900 shadow-md bg-gray-100 w-full">
-              <img className="h-12 w-12 rounded-full object-cover mr-4" src={'http://localhost:3000/' + post.author.profilePicture} alt="Author Avatar" />
+              <img className="h-12 w-12 rounded-full object-cover mr-4" src={host + post.author.profilePicture} alt="Author Avatar" />
               <div className="flex-1 min-w-0">
                 <p className="text-lg font-bold text-gray-900 truncate">{post.author.username}</p>
                 <p className="text-sm text-gray-600">{post.title}</p>
               </div>
               <div className="flex items-center ml-4 space-x-2">
-                <button onClick={handleLike} className="text-gray-600 hover:text-gray-800">
-                  <FontAwesomeIcon icon={faThumbsUp} size="lg" className={liked ? 'text-blue-500' : ''} />
-                  <span>{post.likesCount}</span>
-                </button>
+              <button
+     onClick={handleLike}
+     className={`text-gray-600 hover:text-gray-800 ${liked && 'opacity-90 cursor-not-allowed'}`}
+     disabled={liked}
+   >
+     <FontAwesomeIcon icon={faThumbsUp} size="lg" className={liked ? 'text-blue-500' : ''} />
+     <span>{likeCount}</span>
+   </button>
+   
+
                 <div className="text-gray-600 flex items-center space-x-1">
                   <FontAwesomeIcon icon={faEye} size="lg" />
                   <span>{viewCount}</span>

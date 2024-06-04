@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Post {
     _id: string;
     content: string;

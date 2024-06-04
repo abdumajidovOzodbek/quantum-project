@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideo, faNewspaper, faPen, faFilm } from '@fortawesome/free-solid-svg-icons';
-import { useToGetprofile } from '../../profiles/hooks/useProfile';
+import { host, useToGetprofile } from '../../profiles/hooks/useProfile';
 import { senderId } from '../../auth/states/useAuthStore';
 import { deleteAccount, deleteProfilePicture, updateProfile, uploadPicture } from '../services/useMyprofileService';
 import ErrorModal from '../../Errors/error'; // Adjust the path if necessary
-
 const MyProfile = () => {
     const { data, error, isLoading } = useToGetprofile(senderId);
     const [selectedPicture, setSelectedPicture] = useState(null);
@@ -43,7 +42,7 @@ const MyProfile = () => {
             if (uploaded.user) {
                 location.reload();
             }
-        } catch (err) {
+        } catch (err:any) {
             setErrorMessage(err.response.data.message);
         }
     };
@@ -52,7 +51,7 @@ const MyProfile = () => {
         try {
             await deleteProfilePicture();
             location.reload();
-        } catch (err) {
+        } catch (err:any) {
             setErrorMessage(err.response.data.message);
         }
     };
@@ -62,14 +61,13 @@ const MyProfile = () => {
             await deleteAccount();
             localStorage.clear();
             location.reload();
-        } catch (err) {
+        } catch (err:any) {
             setErrorMessage(err.response.data.message);
         }
     };
 
     const handleLogout = async () => {
-        // Logic to logout user
-        console.log("Logout clicked");
+        localStorage.clear()
     };
 
     const handleUsernameUpdate = async () => {
@@ -77,78 +75,75 @@ const MyProfile = () => {
         try {
             await updateProfile(username)
             location.reload()
-        } catch (error) {
-            console.log(error);
-            
+        } catch (error:any) {
             setErrorMessage(error.response.data.message)
         }
     };
 
     return (
-        <div className="container mx-auto py-8">
-            {errorMessage && (
-                <ErrorModal message={errorMessage} onClose={() => setErrorMessage(null)} />
-            )}
-            <div className="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-                <div className="p-4">
+        <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {errorMessage && (
+            <ErrorModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+        )}
+        <div className="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+            <div className="p-5">
+                <div className="flex items-center justify-center">
+                    <div className="w-36 h-36 rounded-full ring ring-purple-300 ring-offset-base-100 ring-offset-2">
+                        <img src={host + profile.profilePicture} alt="Profile" className="w-full h-full rounded-full" />
+                    </div>
+                </div>
+                <div className="text-center mt-5">
+                    <h2 className="font-semibold text-gray-700 text-lg">@{profile.username}</h2>
+                </div>
+                <div className="flex justify-center mt-4 gap-4">
+                    <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center" htmlFor="upload-photo">
+                        Choose picture
+                        <input id="upload-photo" type="file" accept="image/*" onChange={handlePictureChange} className="sr-only" />
+                    </label>
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-sm px-5 py-2.5 flex items-center" onClick={handleUploadPicture}>
+                        Upload
+                    </button>
+                    {profile.profilePicture !== 'uploads/default-avatar.png' && (
+                        <button className="bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg text-sm px-5 py-2.5" onClick={handleDeletePicture}>
+                            Delete current photo
+                        </button>
+                    )}
+                </div>
+                <div className="flex justify-center mt-4 gap-4">
+                    <button className="bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg text-sm px-5 py-2.5" onClick={handleDeleteAccount}>
+                        Delete Account
+                    </button>
+                    <button className="bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg text-sm px-5 py-2.5" onClick={handleLogout}>
+                        Logout
+                    </button>
+                </div>
+                <div className="mt-4">
                     <div className="flex items-center justify-center">
-                        <img src={'http://localhost:3000/' + profile.profilePicture} alt="Profile" className="w-32 h-32 rounded-full" />
-                    </div>
-                    <div className="text-center mt-4">
-                        <h2 className="text-gray-600">@{profile.username}</h2>
-                    </div>
-                    <div className="mt-4">
-                        <h3 className="text-lg font-semibold">About Me</h3>
-                        <p className="text-gray-600">{profile.bio}</p>
-                    </div>
-                    <div className="flex justify-center mt-6 space-x-4">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handlePictureChange}
-                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-                        />
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleUploadPicture}>
-                            Upload Picture
-                        </button>
-                        {profile.profilePicture !== 'uploads/default-avatar.png' && (
-                            <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg" onClick={handleDeletePicture}>
-                                Delete Picture
-                            </button>
-                        )}
-                    </div>
-                    <div className="flex justify-center mt-6 space-x-4">
-                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg" onClick={handleDeleteAccount}>
-                            Delete Account
-                        </button>
-                        <button className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg" onClick={handleLogout}>
-                            Logout
-                        </button>
-                    </div>
-                    <div className="flex justify-center mt-6">
                         <input
                             type="text"
-                            className="border border-gray-300 rounded-lg p-2 mr-2"
+                            className="border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg p-2.5 mr-2 flex-1"
                             onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Enter new username"
                         />
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleUsernameUpdate}>
-                            Update Username
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-sm px-5 py-2.5" onClick={handleUsernameUpdate}>
+                            Update
                         </button>
                     </div>
                 </div>
             </div>
-            <nav className="mt-8">
-                <ul className="flex flex-col space-y-2">
-                    <li>
-                        <NavLink to="/my-new-posts" className="flex items-center space-x-2 bg-purple-500 text-white px-4 py-2 rounded-lg">
-                            <FontAwesomeIcon icon={faPen} className="w-6 h-6" />
-                            <span>My New Posts</span>
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/my-videos" className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg">
-                            <FontAwesomeIcon icon={faFilm} className="w-6 h-6" />
-                            <span>My Videos</span>
+        </div>
+        <nav className="mt-8">
+            <ul className="flex flex-col space-y-2">
+                <li>
+                    <NavLink to="/my-new-posts" className="flex items-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm font-medium py-2.5 px-4 transition duration-200 ease-in-out transform hover:translate-y-1">
+                        <FontAwesomeIcon icon={faPen} className="w-5 h-5" />
+                        <span>My New Posts</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/my-videos" className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium py-2.5 px-4 transition duration-200 ease-in-out transform hover:translate-y-1">
+                        <FontAwesomeIcon icon={faFilm} className="w-5 h-5" />
+                        <span>My Videos</span>
                         </NavLink>
                     </li>
                 </ul>

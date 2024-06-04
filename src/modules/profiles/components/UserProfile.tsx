@@ -1,11 +1,11 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useUserById } from '../hooks/useProfile';
+import { host, useUserById } from '../hooks/useProfile';
 
 const UserProfile = () => {
     const { userId }: any = useParams();
-    const { data, isLoading, error }: any= useUserById(userId);
-    const navigate=useNavigate()
+    const { data, isLoading, error }: any = useUserById(userId);
+    const navigate = useNavigate()
     const handleSendMessage = () => {
         navigate(`/chat/${userId}`);
     };
@@ -18,7 +18,7 @@ const UserProfile = () => {
             {data && (
                 <div className="bg-white shadow-lg rounded-lg p-8 m-8 max-w-lg mx-auto text-center transition-transform transform hover:scale-105">
                     <img
-                        src={`http://localhost:3000/${data.user.profilePicture}`}
+                        src={host + data.user.profilePicture}
                         alt={`${data.user.username}'s profile`}
                         className="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-blue-500"
                     />

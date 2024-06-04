@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Login from './auth/components/Login';
 import NewsList from './employees/components/NewsList';
 import { useAuthStore } from './auth/states/useAuthStore';
-import Button from './core/design-system/Button';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Register from './auth/components/SignUpForm';
 import Layout from './core/components/layout'
@@ -17,14 +16,13 @@ import MyProfile from './myProfile/components/myProfile';
 import Upload from './upload/components/upload';
 import NewPost from './upload/components/uploadnewPost';
 import NewVideo from './upload/components/uploadVideo';
-
+import MyNews from './myProfile/components/mynewsPosts';
+import MyVideos from './myProfile/components/myVideos';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
-  const { user, logout } = useAuthStore();
   return (
     <QueryClientProvider client={queryClient}>
-
       <BrowserRouter>
         <Routes>
           <Route path="/" element={< Layout />}>
@@ -33,6 +31,8 @@ const App: React.FC = () => {
             <Route path='upload' element={<Upload />} />
             <Route path='upload-news' element={<NewPost />} />
             <Route path='upload-video' element={<NewVideo />} />
+            <Route path='my-new-posts' element={<MyNews />} />
+            <Route path='my-videos' element={<MyVideos />} />
             <Route path='videos' element={<VideoList />} >
               <Route path='users' element={<Profiles />} />
             </Route>

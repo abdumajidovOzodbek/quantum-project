@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { useToGetprofile, useUserById } from '../../profiles/hooks/useProfile';
+import { host, useToGetprofile, useUserById } from '../../profiles/hooks/useProfile';
 import io, { Socket } from 'socket.io-client';
 import axios from 'axios';
-import {senderId} from '../../auth/states/useAuthStore'
-// Replace with your server URL
-export const socket: Socket = io('http://localhost:3000');
+import { senderId } from '../../auth/states/useAuthStore';
+import {Message} from '../interfaces/interface'
 
-interface Message {
-    sender: string;
-    receiverId: string;
-    type: string;
-    content: string;
-    mediaUrl?: string;
-}
+
+export const socket: Socket = io(host);
 
 const ChatWithUser: React.FC = () => {
     const { userId }: any = useParams<{ userId: string }>();
@@ -27,7 +21,7 @@ const ChatWithUser: React.FC = () => {
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const response = await axios.get<Message[]>(`http://localhost:3000/messages/${senderId}/${userId}`);
+                const response = await axios.get<Message[]>(`${host}/messages/${senderId}/${userId}`);
                 setMessages(response.data);
             } catch (err) {
                 console.error('Error fetching messages:', err);
@@ -36,37 +30,21 @@ const ChatWithUser: React.FC = () => {
 
         fetchMessages();
 
-        // Join the room corresponding to the senderId
         socket.emit('join room', senderId);
 
-        // Listener for receiving messages from the server
         socket.on('chat message', (newMessage: Message) => {
             setMessages(prevMessages => [...prevMessages, newMessage]);
         });
 
-        // Clean up the listener and leave the room when the component unmounts
         return () => {
             socket.off('chat message');
             socket.emit('leave room', senderId);
         };
     }, [senderId, userId]);
 
-    // Scroll to the bottom of the messages container
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return <div className="text-red-600 text-center font-semibold text-xl">Error: {error.message}</div>;
-    }
 
     const handleSendMessage = () => {
         if (message.trim()) {
@@ -78,31 +56,28 @@ const ChatWithUser: React.FC = () => {
                 mediaUrl: '',
             };
 
-            // Emit the message to the server
             socket.emit('chat message', newMessage);
             setMessage('');
         }
     };
 
     return (
-        data && userId && (
-            <div className="flex flex-col flex-auto h-full p-6 bg-blue-100">
-                <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
-                    {/* Profile Owner Details */}
+        data ? (
+            <div className="flex flex-col flex-auto h-[650px] p-6 bg-blue-100 overflow-y-auto">
+                <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4 overflow-y-auto">
                     <div className="flex items-center mb-4 bg-blue-100 rounded-2xl">
                         <div className="flex-shrink-0">
-                            <img className="h-12 w-12 rounded-full" src={'http://localhost:3000/'+ data.user.profilePicture} alt={data.name} />
+                            <img className="h-12 w-12 rounded-full" src={ host+ data.user.profilePicture} alt={data.name} />
                         </div>
                         <div className="ml-3">
                             <div className="text-lg font-semibold">{data.user.username}</div>
-                           
                         </div>
                     </div>
 
-                    <div className="flex flex-col h-full overflow-x-auto mb-4">
-                        <div className="flex flex-col-reverse h-full">
+                    <div className="flex flex-col h-full overflow-y-auto mb-4">
+                        <div className="flex flex-col-reverse h-full overflow-y-auto">
                             <div className="grid grid-cols-12 gap-y-2">
-                                {profile.data && messages.map((msg, index) => (
+                                {profile.data && messages.length > 0 ? messages.map((msg, index) => (
                                     <div
                                         key={index}
                                         className={`col-span-12 flex ${msg.sender === senderId ? 'justify-end' : 'justify-start'}`}
@@ -114,7 +89,9 @@ const ChatWithUser: React.FC = () => {
                                             <div>{msg.content}</div>
                                         </div>
                                     </div>
-                                ))}
+                                )) : <div className='flex flex-col items-center justify-center h-full p-6 w-full'>
+                                    <p className="text-lg font-semibold text-gray-600">No messages</p>
+                                    </div>}
                             </div>
                         </div>
                         <div ref={messagesEndRef}></div>
@@ -153,6 +130,10 @@ const ChatWithUser: React.FC = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+        ) : (
+            <div className="flex flex-col items-center justify-center h-full p-6 bg-blue-100 w-full">
+                <p className="text-lg font-semibold text-gray-600">Select a chat</p>
             </div>
         )
     );

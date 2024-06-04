@@ -1,30 +1,27 @@
 import React from 'react';
-import { useAllUsers } from '../../profiles/hooks/useProfile';
-import ChatWithUser, { socket } from './chatWithUserComp';
-import { Link, Route, Routes, useRoutes } from 'react-router-dom';
-
+import { host, useAllUsers } from '../../profiles/hooks/useProfile';
+import ChatWithUser from './chatWithUserComp';
+import { Link } from 'react-router-dom';
+import { senderId } from '../../auth/states/useAuthStore';
 const Chat = () => {
 
     const { data, isLoading, error } = useAllUsers()
-    const setId = (id) => {
-        socket.emit('chats', id)
-    }
-    const createUserButton = (user) => {
+    const createUserButton = (user:any) => {
+        if (user._id === senderId) {
+            return null; 
+        }
+
         return (
-            <Link onClick={() => {
-                setId(user._id)
-                console.log('hi');
-                
-            }} className='flex flex-row items-center hover:bg-gray-100 rounded-xl p-2' key={user._id} to={user._id}>
-                <img src={'http://localhost:3000/' + user.profilePicture} className='flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full' />
+            <Link className='flex flex-row items-center hover:bg-gray-100 rounded-xl p-2' key={user._id} to={user._id}>
+                <img src={host + user.profilePicture} className='flex items-center justify-center h-8 w-8 bg-indigo-200 rounded-full' />
                 <b className='ml-2 text-sm font-semibold'>{user.username}</b>
             </Link>
         );
-    }
+    };
 
     return (
-        data && <div className="flex h-screen antialiased text-gray-800">
-            <div className="flex flex-row h-full w-full overflow-x-hidden">
+        data && <div className="flex h-[640px] antialiased text-gray-800">
+            <div className="flex flex-row h-full w-full overflow-x-none">
                 <div className="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
                     <div className="flex flex-row items-center justify-center h-12 w-full">
                         <div className="flex items-center justify-center rounded-2xl text-indigo-700 bg-indigo-100 h-10 w-10">
@@ -37,10 +34,10 @@ const Chat = () => {
                     <div className="flex flex-col mt-8">
                         <div className="flex flex-row items-center justify-between text-xs">
                             <span className="font-bold">Active Conversations</span>
-                            <span className="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">4</span>
+                            <span className="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">{data.users.length}</span>
                         </div>
-                        <div className="flex flex-col space-y-1 mt-4 -mx-2 h-48 overflow-y-auto">
-                            {data.users.map(user => createUserButton(user))}
+                        <div className="flex flex-col space-y-1 mt-4 mx-2 h-[400px] overflow-y-auto">
+                            {data.users.map((user: any) => createUserButton(user))}
                         </div>
                     </div>
                 </div>

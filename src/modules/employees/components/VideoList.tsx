@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faThumbsUp, faComment } from '@fortawesome/free-solid-svg-icons';
 import VideoModal from './VideoModal';
 import { Post } from '../interfaces/interface';
+import { host } from '../../profiles/hooks/useProfile';
 
 const VideoReels: React.FC = () => {
   const { data, error, isLoading } = usePosts();
@@ -61,16 +62,15 @@ const VideoReels: React.FC = () => {
             <video
               ref={(video) => (videoRefs.current[post._id] = video!)}
               className="w-full h-full"
-              src={'http://localhost:3000/' + post.mediaUrl}
+              src={host + post.mediaUrl}
               onClick={(event) => togglePlay(post._id, event)}
             ></video>
             <div className="absolute bottom-0 w-full p-4 text-white bg-gradient-to-t from-black">
               <div className="flex items-center mb-2">
-                <img className="h-8 w-8 rounded-full mr-3" src={'http://localhost:3000/' + post.author.profilePicture} alt="Author Avatar"></img>
+                <img className="h-8 w-8 rounded-full mr-3" src={host + post.author.profilePicture} alt="Author Avatar"></img>
                 <p className="text-sm truncate">{post.author.username}</p>
               </div>
               <p className="text-sm font-semibold mb-2">{post.title}</p>
-              <p className="text-xs text-gray-400">{post.content}</p>
               <div className="flex items-center justify-between mt-2">
                 <span className="flex items-center">
                   <FontAwesomeIcon icon={faThumbsUp} className="mr-1" /> {post.likesCount}

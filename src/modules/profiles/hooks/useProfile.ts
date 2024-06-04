@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../core/lib/apiClient";
 export const token = localStorage.getItem('token')
+export const host = 'http://localhost:3000/'
 
 const fetchUserById = async (id: number) => {
     try {

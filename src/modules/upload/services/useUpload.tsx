@@ -1,7 +1,7 @@
 import apiClient from "../../core/lib/apiClient";
 import { token } from "../../profiles/hooks/useProfile";
 
-export const uploadNews = async (obj) => {
+export const uploadNews = async (obj: { title: any; content: any; media: any; author?: any; }) => {
 const formData=new FormData()
 formData.append('title',obj.title)
 formData.append('content',obj.content)
@@ -18,7 +18,7 @@ formData.append('type','news')
     return data;
 };
 
-export const uploadVideo = async (obj) => {
+export const uploadVideo = async (obj: { title: any; media: any; author?: any; }) => {
     const formData=new FormData()
     formData.append('title',obj.title)
     formData.append('media',obj.media)

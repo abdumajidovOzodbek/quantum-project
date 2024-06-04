@@ -1,7 +1,6 @@
 import React from 'react';
-import { useAllUsers } from '../hooks/useProfile';
+import { host, useAllUsers } from '../hooks/useProfile';
 import { Link } from 'react-router-dom';
-
 const Profiles = () => {
     const { data, isLoading, error } = useAllUsers();
 
@@ -15,7 +14,7 @@ const Profiles = () => {
                 {data && data.users.map((user: any) => (
                     <div key={user._id} className="bg-white shadow-lg rounded-lg p-6 transition-transform transform hover:scale-105">
                         <img
-                            src={`http://localhost:3000/${user.profilePicture}`}
+                            src={`${host}${user.profilePicture}`}
                             alt={`${user.username}'s profile`}
                             className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-blue-500"
                         />

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ErrorModal = ({ message, onClose }) => {
+const ErrorModal = ({ message, onClose }:any) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
             <div className="bg-white p-4 rounded-lg shadow-md max-w-sm w-full">

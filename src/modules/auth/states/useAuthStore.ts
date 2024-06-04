@@ -14,10 +14,15 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (username: string, password: string) => {
     const loggedInUser = await login(username, password)
     set({ user: loggedInUser });
+    return loggedInUser
   },
-  logout: () => set({ user: null }),
+  logout: () => {
+    set({ user: null })
+    localStorage.clear()
+  },
   register: async (username: string, password: string) => {
     const loggedInUser = await register(username, password)
     set({ user: loggedInUser });
+    return loggedInUser
   }
 }));
