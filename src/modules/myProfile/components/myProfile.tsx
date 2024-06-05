@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideo, faNewspaper, faPen, faFilm } from '@fortawesome/free-solid-svg-icons';
-import { host, senderId, useToGetprofile } from '../../profiles/hooks/useProfile';
+import { host, useToGetprofile } from '../../profiles/hooks/useProfile';
 import { deleteAccount, deleteProfilePicture, updateProfile, uploadPicture } from '../services/useMyprofileService';
 import ErrorModal from '../../Errors/error'; // Adjust the path if necessary
-
 const MyProfile = () => {
-    const { data, error, isLoading } = useToGetprofile(senderId);
+    const { userId }: any = useParams()
+    const { data, error, isLoading } = useToGetprofile(userId);
     const [selectedPicture, setSelectedPicture] = useState(null);
     const [username, setUsername] = useState("");
     const [errorMessage, setErrorMessage] = useState(null);
@@ -68,6 +68,7 @@ const MyProfile = () => {
 
     const handleLogout = () => {
         localStorage.clear()
+        location.reload()
     };
 
     const handleUsernameUpdate = async () => {

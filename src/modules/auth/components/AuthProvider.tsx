@@ -1,22 +1,19 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const AuthProvider = ({children}:any) => {
-    const navigate = useNavigate()
-
+const AuthProvider = ({ children }: any) => {
     const [token] = useState(localStorage.getItem('token'))
 
-    useEffect(() =>{
-        if( !token || token === null ){
-             navigate('/login')
+    useEffect(() => {
+        if (!token || token === null) {
+            location.href = '/login'
         }
-    },[token])
+    }, [token])
 
     return (
         <>
             {
-             children
+                children
             }
         </>
     );

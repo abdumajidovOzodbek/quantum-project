@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../states/useAuthStore';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import ErrorModal from '../../Errors/error';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { register } = useAuthStore();
-  const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState(null)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const data:any = await register(username, password);
       if (data.token) {
-        navigate('/videos')
+        location.href='videos'
       }
     } catch (error:any) {
       console.log(error.response.data);

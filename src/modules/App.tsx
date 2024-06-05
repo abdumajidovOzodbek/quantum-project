@@ -27,7 +27,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={< Layout />}>
             <Route path='news' element={<NewsList />} />
-            <Route path='profile' element={<MyProfile />} />
+            <Route path='profile/:userId' element={<MyProfile />} />
             <Route path='upload' element={<Upload />} />
             <Route path='upload-news' element={<NewPost />} />
             <Route path='upload-video' element={<NewVideo />} />

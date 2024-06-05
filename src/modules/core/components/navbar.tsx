@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNewspaper, faVideo, faUser, faComments } from '@fortawesome/free-solid-svg-icons';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
     const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -22,10 +22,10 @@ const Navbar: React.FC = () => {
                     <FontAwesomeIcon icon={faUser} size="lg" />
                     <span className="mt-1 text-xs">Users</span>
                 </NavLink>
-                <NavLink to="/chat" className={navLinkClass}>
+                <Link to="/chat">
                     <FontAwesomeIcon icon={faComments} size="lg" />
                     <span className="mt-1 text-xs">Chat</span>
-                </NavLink>
+                </Link>
             </nav>
         </header>
     );

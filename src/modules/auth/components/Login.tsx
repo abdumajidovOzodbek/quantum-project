@@ -14,7 +14,7 @@ const Login: React.FC = () => {
     try {
       const data:any = await login(username, password);
       if (data.token) {
-        navigate('/videos')
+        location.href='videos'
       }
     } catch (error) {
       setErrorMessage('Username or password incorrect please check or sign up')
